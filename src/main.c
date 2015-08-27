@@ -3,8 +3,13 @@ static Window *s_main_window;
 static TextLayer *s_digit_container[4];
 static GFont s_time_font;
 
+static const char digit_strings[10][2] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+static const char* get_digit_string(char c) {
+  return digit_strings[c - '0'];
+}
+
 static void time_window_load(Window *window) {
-  
   // top hour layers
   s_digit_container[0] = text_layer_create(GRect(0, 0, 72, 84));
   s_digit_container[1] = text_layer_create(GRect(72, 0, 72, 84));
@@ -12,8 +17,6 @@ static void time_window_load(Window *window) {
   // bottom minute layers
   s_digit_container[2] = text_layer_create(GRect(0, 84, 72, 84));
   s_digit_container[3] = text_layer_create(GRect(72, 84, 72, 84));
-  
-  
   
   text_layer_set_background_color(s_digit_container[0], GColorBlack);
   text_layer_set_background_color(s_digit_container[1], GColorBlack);
@@ -53,55 +56,28 @@ static void time_window_unload(Window *window) {
   fonts_unload_custom_font(s_time_font);
 }
 
-static void update_time() {
-  // Get a tm structure
-  time_t temp = time(NULL); 
-  struct tm *tick_time = localtime(&temp);
-
+static void update_time(struct tm *tick_time) {
   // Create a long-lived buffer
-  static char time[] = "0000";
+  static char time[] = {'0', '0', '0', '0', '0'};
 
   // Write the current hours and minutes into the buffer
   if(clock_is_24h_style() == true) {
     // Use 24 hour format
-    strftime(time, sizeof("0000"), "%H%M", tick_time);
+    strftime(time, 5, "%H%M", tick_time);
   } else {
     // Use 12 hour format
-    strftime(time, sizeof("0000"), "%I%M", tick_time);
+    strftime(time, 5, "%I%M", tick_time);
   }
 
   // Display this time on the TextLayer
   
   for (int i = 0; i < 4; i++) {
-    switch(time[i]) {
-    case '0': text_layer_set_text(s_digit_container[i], "0");
-      break;
-    case '1': text_layer_set_text(s_digit_container[i], "1");
-      break;
-    case '2': text_layer_set_text(s_digit_container[i], "2");
-      break;
-    case '3': text_layer_set_text(s_digit_container[i], "3");
-      break;
-    case '4': text_layer_set_text(s_digit_container[i], "4");
-      break;
-    case '5': text_layer_set_text(s_digit_container[i], "5");
-      break;
-    case '6': text_layer_set_text(s_digit_container[i], "6");
-      break;
-    case '7': text_layer_set_text(s_digit_container[i], "7");
-      break;
-    case '8': text_layer_set_text(s_digit_container[i], "8");
-      break;
-    case '9': text_layer_set_text(s_digit_container[i], "9");
-      break;
-    default:
-      text_layer_set_text(s_digit_container[i], "E");
-    }
+    text_layer_set_text(s_digit_container[i], get_digit_string(time[i]));
   }
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-  update_time();
+  update_time(tick_time);
 }
 
 
@@ -115,7 +91,6 @@ static void init() {
   //window_set_background_color(s_main_window, GColorBlack);
   // true for animation
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-  update_time();
   window_stack_push(s_main_window, true);
 }
 
