@@ -1,0 +1,28 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Johannes Arnold",
+    "longName": "Tempus",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "fonts/FORCED SQUARE.ttf",
+                "name": "FONT_FORCED_SQUARE_42",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Tempus",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "3918f853-c4d0-4dff-bb93-f03088b4486c",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
